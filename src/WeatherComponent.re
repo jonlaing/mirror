@@ -2,7 +2,9 @@ open ReactNative;
 
 open Js.Promise;
 
-open Utils;
+open Utils.React;
+
+open Utils.Option;
 
 let precToStr = (p) =>
   switch p {
@@ -30,27 +32,36 @@ type state = {
   nextTimerId: ref(option(Js.Global.intervalId))
 };
 
-let zip = "11221";
-
 let currentSeconds = () => Js.Date.now() /. 1000.0;
 
 let component = ReasonReact.reducerComponent("Weather");
 
-let fetchCurrent = (apiKey) =>
-  Forecast.fetchCurrentByZip(~apiKey, ~zip) |> then_((res) => Weather.fromCurrent(res) |> resolve);
+let fetchCurrent = (reduce, apiKey, zip, ()) => {
+  let _ =
+    Forecast.fetchCurrentByZip(~apiKey, ~zip)
+    |> then_((res) => Weather.fromCurrent(res) |> resolve)
+    |> then_((w) => reduce((_) => FetchCurrentSuccess(w), ()) |> resolve)
+    |> catch((err) => reduce((_) => FetchFail(err), ()) |> resolve);
+  ()
+};
 
-let fetchNext = (apiKey) =>
-  Forecast.fetchNextByZip(~apiKey, ~zip)
-  |> then_((res) => Weather.fromNext(res) |> resolve)
-  |> then_(
-       (ws) =>
-         ws
-         |> BatList.filter((w) => w.Weather.timestamp >= currentSeconds())
-         |> BatList.take(4)
-         |> resolve
-     );
+let fetchNext = (reduce, apiKey, zip, ()) => {
+  let _ =
+    Forecast.fetchNextByZip(~apiKey, ~zip)
+    |> then_((res) => Weather.fromNext(res) |> resolve)
+    |> then_(
+         (ws) =>
+           ws
+           |> BatList.filter((w) => w.Weather.timestamp >= currentSeconds())
+           |> BatList.take(4)
+           |> resolve
+       )
+    |> then_((ws) => reduce((_) => FetchNextSuccess(ws), ()) |> resolve)
+    |> catch((err) => reduce((_) => FetchFail(err), ()) |> resolve);
+  ()
+};
 
-let make = (~apiKey, _children) => {
+let make = (~apiKey, ~zip, _children) => {
   ...component,
   initialState: () => {
     current: Weather.make() |> Weather.kelvinToFarenheit,
@@ -60,36 +71,14 @@ let make = (~apiKey, _children) => {
     nextTimerId: ref(None)
   },
   didMount: (self) => {
-    let current = () =>
-      fetchCurrent(apiKey)
-      |> then_((w) => self.reduce((_) => FetchCurrentSuccess(w), ()) |> resolve)
-      |> catch((err) => self.reduce((_) => FetchFail(err), ()) |> resolve);
-    let next = () =>
-      fetchNext(apiKey)
-      |> then_((ws) => self.reduce((_) => FetchNextSuccess(ws), ()) |> resolve)
-      |> catch((err) => self.reduce((_) => FetchFail(err), ()) |> resolve);
-    let _ = current();
-    let _ = next();
+    /* Initial fetch of data */
+    fetchCurrent(self.reduce, apiKey, zip, ());
+    fetchNext(self.reduce, apiKey, zip, ());
+    /* Create timers to keep polling forecasts */
     self.state.currentTimerId :=
-      Some(
-        Js.Global.setInterval(
-          () => {
-            let _ = current();
-            ()
-          },
-          10000
-        )
-      );
+      return(Js.Global.setInterval(fetchCurrent(self.reduce, apiKey, zip), 10000));
     self.state.nextTimerId :=
-      Some(
-        Js.Global.setInterval(
-          () => {
-            let _ = next();
-            ()
-          },
-          1000 * 60 * 5
-        )
-      );
+      return(Js.Global.setInterval(fetchNext(self.reduce, apiKey, zip), 1000 * 60 * 5));
     ReasonReact.NoUpdate
   },
   reducer: (action, state) =>

@@ -1,4 +1,4 @@
-[@bs.val] external bufferFrom : 'something => Node.Buffer.t = "Buffer.from";
+[@bs.val] external bufferFrom : Bs_fetch.arrayBuffer => Node.Buffer.t = "Buffer.from";
 
 open Js.Promise;
 

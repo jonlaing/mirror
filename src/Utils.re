@@ -1,8 +1,9 @@
 module Option = {
-  open Option.Monad;
-  let (>>=) = bind;
-  let return = return;
+  let (>>=) = Option.bind;
+  let return = Option.Monad.return;
   let equals = (cmp, opt) => opt >>= ((a) => return(a == cmp));
 };
 
-let ste = ReasonReact.stringToElement;
+module React = {
+  let ste = ReasonReact.stringToElement;
+};

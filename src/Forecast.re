@@ -57,6 +57,10 @@ module Decode = {
   let next = (json) => Json.Decode.{list: json |> field("list", list(current))};
 };
 
+let currentWeatherUri = "https://api.openweathermap.org/data/2.5/weather?";
+
+let nextForecastUri = "https://api.openweathermap.org/data/2.5/forecast?";
+
 let withAPIKey = (key, uri) => uri ++ "&APPID=" ++ key;
 
 let withLatLong = (lat, long, uri) =>
@@ -77,17 +81,12 @@ let fetchCurrent = fetch_(Decode.current);
 let fetchNext = fetch_(Decode.next);
 
 let fetchCurrentByCoords = (~apiKey, ~latitude, ~longitude) =>
-  "https://api.openweathermap.org/data/2.5/weather?"
-  |> withLatLong(latitude, longitude)
-  |> fetchCurrent(apiKey);
+  currentWeatherUri |> withLatLong(latitude, longitude) |> fetchCurrent(apiKey);
 
 let fetchCurrentByZip = (~apiKey, ~zip) =>
-  "https://api.openweathermap.org/data/2.5/weather?" |> withZip(zip) |> fetchCurrent(apiKey);
+  currentWeatherUri |> withZip(zip) |> fetchCurrent(apiKey);
 
 let fetchNextByCoords = (~apiKey, ~latitude, ~longitude) =>
-  "https://api.openweathermap.org/data/2.5/forecast?"
-  |> withLatLong(latitude, longitude)
-  |> fetchNext(apiKey);
+  nextForecastUri |> withLatLong(latitude, longitude) |> fetchNext(apiKey);
 
-let fetchNextByZip = (~apiKey, ~zip) =>
-  "https://api.openweathermap.org/data/2.5/forecast?" |> withZip(zip) |> fetchNext(apiKey);
+let fetchNextByZip = (~apiKey, ~zip) => nextForecastUri |> withZip(zip) |> fetchNext(apiKey);
