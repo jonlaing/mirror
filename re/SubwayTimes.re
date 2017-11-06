@@ -2,6 +2,8 @@
 
 open Js.Promise;
 
+open Utils.Option;
+
 type stopTimeEvent = {time: option(int)};
 
 type vehicleDescriptor = {
@@ -155,6 +157,24 @@ let fetch_ = (~apiKey, ~feedId) =>
   |> withFeedId(feedId)
   |> Bs_fetch.fetch
   |> then_(Bs_fetch.Response.arrayBuffer)
-  |> then_((res) => res |> bufferFrom |> resolve)
-  |> then_((res) => GTFS.decode(res) |> resolve)
-  |> then_((res) => res |> Decode.feedMessage |> resolve);
+  |> then_((arr) => bufferFrom(arr) |> resolve)
+  |> then_((buf) => GTFS.decode(buf) |> resolve)
+  |> then_((gtfs) => Decode.feedMessage(gtfs) |> resolve);
+
+let containsUpdateWithStopId = (stopId, stu) =>
+  List.fold_left(
+    (acc, s: stopTimeUpdate) =>
+      ! Option.default(false, acc) ? equals(stopId, s.stopId) : return(true),
+    None,
+    stu
+  );
+
+let findUpdatesByStopId = (stopId, fm) =>
+  fm.entity
+  |> List.filter(
+       (t) =>
+         t.tripUpdate
+         >>= ((u) => u.stopTimeUpdate)
+         >>= containsUpdateWithStopId(stopId)
+         |> Option.default(false)
+     );

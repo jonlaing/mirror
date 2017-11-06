@@ -2,7 +2,7 @@ open ReactNative;
 
 open Js.Promise;
 
-let ste = ReasonReact.stringToElement;
+open Utils;
 
 let precToStr = (p) =>
   switch p {

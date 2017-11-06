@@ -38,6 +38,11 @@ build re/Temp.mlast.d : build_deps re/Temp.mlast
 build re/Temp.cmj |  $src_root_dir/lib/js/re/Temp.js re/Temp.cmi : build_cmj_cmi re/Temp.mlast
   bsc_flags = $bsc_flags -bs-re-out -bs-super-errors
   bs_package_flags = $bs_package_flags  -bs-package-output commonjs:lib/js/re
+build re/Utils.mlast : build_ast_and_module_sets_from_re $src_root_dir/re/Utils.re
+build re/Utils.mlast.d : build_deps re/Utils.mlast
+build re/Utils.cmj |  $src_root_dir/lib/js/re/Utils.js re/Utils.cmi : build_cmj_cmi re/Utils.mlast
+  bsc_flags = $bsc_flags -bs-re-out -bs-super-errors
+  bs_package_flags = $bs_package_flags  -bs-package-output commonjs:lib/js/re
 build re/Weather.mlast : build_ast_and_module_sets_from_re $src_root_dir/re/Weather.re
 build re/Weather.mlast.d : build_deps re/Weather.mlast
 build re/Weather.cmj |  $src_root_dir/lib/js/re/Weather.js re/Weather.cmi : build_cmj_cmi re/Weather.mlast
@@ -58,4 +63,4 @@ build re/WeatherComponent.mlast.d : build_deps re/WeatherComponent.mlast
 build re/WeatherComponent.cmj |  $src_root_dir/lib/js/re/WeatherComponent.js re/WeatherComponent.cmi : build_cmj_cmi re/WeatherComponent.mlast
   bsc_flags = $bsc_flags -bs-re-out -bs-super-errors
   bs_package_flags = $bs_package_flags  -bs-package-output commonjs:lib/js/re
-build build.ninja : phony  ||  re/WeatherComponent.mlast.d re/SubwayTimes.mlast.d re/Forecast.mlast.d re/Weather.mlast.d re/Temp.mlast.d re/GTFS.mlast.d re/App.mlast.d
+build build.ninja : phony  ||  re/WeatherComponent.mlast.d re/SubwayTimes.mlast.d re/Forecast.mlast.d re/Weather.mlast.d re/Utils.mlast.d re/Temp.mlast.d re/GTFS.mlast.d re/App.mlast.d

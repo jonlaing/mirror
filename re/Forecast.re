@@ -64,9 +64,9 @@ let withLatLong = (lat, long, uri) =>
 
 let withZip = (zip, uri) => uri ++ "&zip=" ++ zip ++ ",us";
 
-let fetch_ = (decode, apiKey, resource) =>
+let fetch_ = (decode, apiKey, uri) =>
   Js.Promise.(
-    withAPIKey(apiKey, resource)
+    withAPIKey(apiKey, uri)
     |> Bs_fetch.fetch
     |> then_(Bs_fetch.Response.json)
     |> then_((json) => decode(json) |> resolve)
