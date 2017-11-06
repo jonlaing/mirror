@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import AppRe from './lib/js/re/App';
+import AppRe from './lib/js/src/App';
 import config from './config';
 
 
