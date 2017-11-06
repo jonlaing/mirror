@@ -4,3 +4,4 @@ npm-debug.*
 config.json
 .merlin
 lib/
+.bsb.lock
