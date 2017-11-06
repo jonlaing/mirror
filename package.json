@@ -1,0 +1,37 @@
+{
+  "name": "mirror",
+  "version": "0.1.0",
+  "private": true,
+  "devDependencies": {
+    "jest-expo": "^22.0.0",
+    "react-native-scripts": "1.7.0",
+    "react-test-renderer": "16.0.0-beta.5"
+  },
+  "main": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
+  "scripts": {
+    "build": "bsb -make-world -clean-world",
+    "watch": "bsb -make-world -clean-world -w",
+    "start": "react-native-scripts start",
+    "eject": "react-native-scripts eject",
+    "android": "react-native-scripts android",
+    "ios": "react-native-scripts ios",
+    "test": "node node_modules/jest/bin/jest.js --watch"
+  },
+  "jest": {
+    "preset": "jest-expo"
+  },
+  "dependencies": {
+    "bs-batteries": "^0.0.13",
+    "bs-fetch": "^0.2.0",
+    "bs-json": "^0.2.4",
+    "bs-moment": "^0.1.8",
+    "bs-platform": "^2.0.0",
+    "bs-react-native": "^0.3.0",
+    "expo": "^22.0.2",
+    "gtfs-realtime-bindings": "^0.0.4",
+    "node-fetch": "next",
+    "react": "16.0.0-beta.5",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-22.0.1.tar.gz",
+    "reason-react": "^0.2.4"
+  }
+}
