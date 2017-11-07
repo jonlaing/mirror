@@ -1,9 +1,11 @@
 {
   "name": "my-awesome-app",
   "reason": {
-      "react-jsx": 2
+    "react-jsx": 2
   },
-  "bsc-flags": ["-bs-super-errors"],
+  "bsc-flags": [
+    "-bs-super-errors"
+  ],
   "bs-dependencies": [
     "bs-react-native",
     "reason-react",
@@ -12,8 +14,13 @@
     "bs-batteries",
     "bs-moment"
   ],
-  "sources": [{
-      "dir": "src"
-  }],
+  "sources": [
+    {
+      "dir": "src",
+      "subdirs": [
+        { "dir": "components" }
+      ]
+    }
+  ],
   "refmt": 3
 }
