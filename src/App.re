@@ -6,7 +6,8 @@ let component = ReasonReact.statelessComponent("App");
 
 let make = (~weatherApiKey, _children) => {
   ...component,
-  render: (_self) => <View> <Weather apiKey=weatherApiKey /> </View>
+  /* TODO: hardcoding zip for now, will make it configurable */
+  render: (_self) => <View> <Weather apiKey=weatherApiKey zip="11221" /> </View>
 };
 
 let default =
