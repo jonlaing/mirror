@@ -1,0 +1,8 @@
+{
+  "weather": {
+    "apiKey": "YOUR OPEN WEATHER API KEY GOES HERE"
+  },
+  "mta": {
+    "apiKey": "YOUR MTA API KEY GOES HERE"
+  }
+}

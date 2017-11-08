@@ -1,3 +1,6 @@
+/**
+ * Took inspiration from: https://github.com/avsm/ocaml-lens/blob/master/lens.ml
+ */
 type t('a, 'b) = {
   get: 'a => 'b,
   set: ('b, 'a) => 'a
@@ -18,11 +21,11 @@ let over = (l, f, a) => {
 
 let compose = (l0, l1) => {get: l1.get ||> l0.get, set: l0.set ||> over(l1)};
 
-let (--|) = compose;
+let (-<<) = compose;
 
 let pipe = (l0, l1) => compose(l1, l0);
 
-let (|--) = pipe;
+let (>>-) = pipe;
 
 let optional = (default) => {
   get: (a) =>

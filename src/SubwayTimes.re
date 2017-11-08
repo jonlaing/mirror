@@ -75,13 +75,14 @@ type feedMessage = {entity: list(feedEntity)};
 
 module Lenses = {
   open Lens;
-  let entity = make((fm) => fm.entity, (e, fm) => {entity: e});
-  let tripUpdate = make((o) => o.tripUpdate, (u, o) => {...o, tripUpdate: u});
+  let entity = make(({entity}) => entity, (e, fm) => {entity: e});
+  let tripUpdate = make(({tripUpdate}) => tripUpdate, (u, o) => {...o, tripUpdate: u});
   let alert =
-    make((o) => o.alert, (a, o) => {...o, alert: a})
-    |-- optional({informedEntity: [], headerText: ""});
+    make(({alert}) => alert, (a, o) => {...o, alert: a})
+    >>- optional({informedEntity: [], headerText: ""});
   let stopTimeUpdate =
-    make((o) => o.stopTimeUpdate, (u, o) => {...o, stopTimeUpdate: u}) |-- optional([]);
+    make(({stopTimeUpdate}) => stopTimeUpdate, (u, o) => {...o, stopTimeUpdate: u})
+    >>- optional([]);
 };
 
 module Decode = {
@@ -180,14 +181,15 @@ let containsUpdateWithStopId = (stopId, stu) =>
     stu
   );
 
-let findUpdatesByStopId = (stopId, fm) => {
-  entity:
-    fm.entity
-    |> List.filter(
-         (t) =>
-           t.tripUpdate
-           >>= ((u) => u.stopTimeUpdate)
-           >>= containsUpdateWithStopId(stopId)
-           |> Option.default(false)
-       )
-};
+let findUpdatesByStopId = (stopId, fm) =>
+  Lens.over(
+    Lenses.entity,
+    List.filter(
+      (t) =>
+        t.tripUpdate
+        >>= ((u) => u.stopTimeUpdate)
+        >>= containsUpdateWithStopId(stopId)
+        |> Option.default(false)
+    ),
+    fm
+  );
